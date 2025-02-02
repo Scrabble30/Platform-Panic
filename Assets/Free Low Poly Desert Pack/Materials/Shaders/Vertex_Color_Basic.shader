@@ -1,38 +1,66 @@
-﻿Shader "Custom/Vertex_Color_Basic" 
+﻿Shader "Custom/Vertex_Color_Basic_URP"
 {
-	Properties 
-	{
-		_Color ("Color", Color) = (1,1,1,1)
-	}
+    Properties
+    {
+        _Color ("Color", Color) = (1,1,1,1)
+    }
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" "RenderPipeline"="UniversalPipeline" }
+        LOD 200
 
-	SubShader 
-	{
-		Tags { "RenderType"="Opaque" }
-		LOD 200
-		
-		CGPROGRAM
-		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Standard //fullforwardshadows
-		
-		#pragma surface surf Lambert noforwardadd
+        HLSLINCLUDE
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+        ENDHLSL
 
-		// Use shader model 3.0 target, to get nicer looking lighting
-		//#pragma target 3.0
+        Pass
+        {
+            Name "Forward"
+            Tags { "LightMode"="UniversalForward" }
 
-		struct Input 
-		{
-			fixed3 color : COLOR;
-		};
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
 
-		fixed4 _Color;
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+                float4 color : COLOR;
+            };
 
-		void surf (Input IN, inout SurfaceOutput o) 
-		{
-			o.Albedo = IN.color.rgb* _Color;
-		}
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+                float3 normalWS : NORMAL;
+                float4 color : COLOR;
+            };
 
-		ENDCG
-	}
+            CBUFFER_START(UnityPerMaterial)
+            float4 _Color;
+            CBUFFER_END
 
-	FallBack "Diffuse"
+            Varyings vert(Attributes IN)
+            {
+                Varyings OUT;
+                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
+                OUT.color = IN.color;
+                return OUT;
+            }
+
+            half4 frag(Varyings IN) : SV_Target
+            {
+                Light mainLight = GetMainLight();
+                float3 normalWS = normalize(IN.normalWS);
+                float NdotL = dot(normalWS, mainLight.direction);
+                float lightIntensity = saturate(NdotL) * mainLight.shadowAttenuation;
+                
+                half3 color = IN.color.rgb * _Color.rgb * (mainLight.color * lightIntensity + unity_AmbientSky.rgb);
+                return half4(color, 1);
+            }
+            ENDHLSL
+        }
+    }
 }
