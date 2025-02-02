@@ -149,11 +149,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sectionSpawnZ: 24
-  sectionLength: 49
-  sectionSpawnCount: 5
+  sectionLength: 50
+  sectionSpawnCount: 3
   prefabs:
   - {fileID: 2976553005397927113, guid: ebb4b944eb3957a4e915190cd6f7657a, type: 3}
   - {fileID: 2976553005397927113, guid: e1258be0ec9cc1941add3a89e2d403fa, type: 3}
+  - {fileID: 2976553005397927113, guid: 500ee9ddaf8b8dd49826337d2232648e, type: 3}
 --- !u!4 &391235039
 Transform:
   m_ObjectHideFlags: 0
