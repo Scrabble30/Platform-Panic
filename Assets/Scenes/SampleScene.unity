@@ -153,6 +153,8 @@ MonoBehaviour:
   sectionSpawnCount: 3
   prefabs:
   - {fileID: 2976553005397927113, guid: ebb4b944eb3957a4e915190cd6f7657a, type: 3}
+  - {fileID: 2976553005397927113, guid: e1258be0ec9cc1941add3a89e2d403fa, type: 3}
+  - {fileID: 2976553005397927113, guid: 500ee9ddaf8b8dd49826337d2232648e, type: 3}
   - {fileID: 2976553005397927113, guid: f65444218ed64d64892e00e342cb2b03, type: 3}
 --- !u!4 &391235039
 Transform:
